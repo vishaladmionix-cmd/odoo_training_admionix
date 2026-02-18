@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server Action -->
+    <record id="action_open_confirmed_sales_orders_server" model="ir.actions.server">
+        <field name="name">Confirmed Orders (Custom Action)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">
+action = env['sale.order'].action_open_confirmed_orders()
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_confirmed_orders_custom_action"
+              name="Confirmed Orders (Custom Action)"
+              parent="sale.sale_menu_root"
+              action="action_open_confirmed_sales_orders_server"
+              sequence="50"/>
+
+</odoo>

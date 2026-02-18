@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hospital_management_user,access.hospital.management.user,model_hospital_management,base.group_user,1,1,1,0
+access_hospital_emergency_user,access.hospital.emergency.user,model_hospital_emergency,base.group_user,1,1,1,0
+access_hospital_emergency_wizard_user,access.hospital.emergency.wizard.user,model_hospital_emergency_wizard,base.group_user,1,1,1,0

@@ -1,0 +1,132 @@
+<odoo>
+    <!-- borrow model form view -->
+    <record id="view_library_borrow_form" model="ir.ui.view">
+        <field name="name">library.borrow.form</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <form>
+                <!--  wizard return btn to open   -->
+                <header>
+                    <field name="state" widget="statusbar"/>
+                    <button name="action_open_wizard"
+                            type="object"
+                            string="Return"
+                            class="btn-primary"
+                            invisible="state != 'issued'"/>
+
+                    <button name="issue_button"
+                            type="object"
+                            string="Issue"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                </header>
+                <sheet>
+                    <div class='oe_title'>
+
+                        <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        </div>
+                    </div>
+                    <group>
+                        <field name="book_id"/>
+                        <field name="member_id"/>
+
+                        <field name="borrow_date" readonly="state=='returned'"/>
+                        <field name="return_date"/>
+                        <field name="actual_return_date" readonly="state=='returned'"/>
+                        <field name="fine_amount" readonly="state=='returned'"/>
+                        <field name="color" readonly="state=='returned'"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- borrow model list view -->
+    <record id="view_library_borrow_list" model="ir.ui.view">
+        <field name="name">library.borrow.list</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="borrow_date"/>
+                <field name="return_date"/>
+                <field name="actual_return_date"/>
+                <field name="fine_amount"/>
+                <field name="color"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- borrow wizard form   -->
+    <record id='view_library_return_wizard_form' model="ir.ui.view">
+        <field name="name">Return Book</field>
+        <field name="model">library.return.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="actual_return_date"/>
+                        <field name="fine_amount"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_return"
+                            type="object"
+                            string="Confirm Return"
+                            class="btn-primary"/>
+                    <button
+                            special="cancel"
+                            string="Cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <!-- search -->
+    <record id="view_library_borrow_search" model="ir.ui.view">
+        <field name="name">library.borrow.search</field>
+        <field name="model">library.borrow</field>
+        <field name="arch" type="xml">
+            <search>
+                <group>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                    <filter name="issued" string="Issued" domain="[('state','=','issued')]"/>
+                    <filter name="returned" string="Returned" domain="[('state','=','returned')]"/>
+                    <filter name="late" string="Late" domain="[('state','=','late')]"/>
+
+                    <filter name="state" string="State" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <!--borrow sequence-->
+    <record id="sequence_library_borrow" model="ir.sequence">
+        <field name="name">Borrow Reference Name</field>
+        <field name="code">library.borrow</field>
+        <field name="prefix">BRW/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!--  borrow model form action  -->
+    <record id="action_library_borrow" model="ir.actions.act_window">
+        <field name="name">Borrow</field>
+        <field name="res_model">library.borrow</field>
+        <field name="search_view_id" ref="view_library_borrow_search" />
+        <field name="view_mode">list,form,search</field>
+    </record>
+
+    <!--  menu for borrow model -->
+    <menuitem id="menu_library_borrow"
+              name="Borrow"
+              parent="menu_library_book_root"
+              action="action_library_borrow"
+              sequence="3"/>
+</odoo>

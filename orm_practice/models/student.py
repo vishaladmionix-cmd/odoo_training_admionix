@@ -9,3 +9,5 @@ class Student(models.Model):
     email = fields.Char()
     active = fields.Boolean(default=True)
 
+    is_paid = fields.Boolean(default=False)
+

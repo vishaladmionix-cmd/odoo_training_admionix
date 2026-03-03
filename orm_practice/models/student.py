@@ -10,5 +10,3 @@ class Student(models.Model):
     active = fields.Boolean(default=True)
 
     is_paid = fields.Boolean(default=False)
-    print(;helopok)
-wdwdwdewdwed

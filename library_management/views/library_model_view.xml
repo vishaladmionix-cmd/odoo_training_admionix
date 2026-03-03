@@ -5,6 +5,20 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                     <button name="test_search_count_unavailable"
+                             type="object"
+                             string="Test Search Count"
+                             class="btn-primary"/>
+
+                     <button name="test_mapped"
+                             type="object"
+                             string="Test Mapped"
+                             class="btn-primary"/>
+
+
+
+                </header>
                 <sheet>
                     <group>
                         <field name="name" readonly="available_qty == 0"/>
@@ -25,12 +39,33 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <search>
-                <group>
-                    <filter name="name" string="Book" context="{'group_by':'name'}"/>
-                </group>
+                <field name="name"/>
+                <field name="author"/>
+                <field name="isbn"/>
+
+                <!-- Filter for Available Books -->
+                <filter name="available_books"
+                        string="Available"
+                        domain="[('state','=','available')]"/>
+
+                <!-- Filter for Unavailable Books -->
+                <filter name="unavailable_books"
+                        string="Unavailable"
+                        domain="[('state','=','unavailable')]"/>
             </search>
         </field>
     </record>
+    <!--    <record id="view_library_model_search" model="ir.ui.view">-->
+    <!--        <field name="name">library.book.search</field>-->
+    <!--        <field name="model">library.book</field>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <search>-->
+    <!--                <group>-->
+    <!--                    <filter name="name" string="Book" context="{'group_by':'name'}"/>-->
+    <!--                </group>-->
+    <!--            </search>-->
+    <!--        </field>-->
+    <!--    </record>-->
 
     <!--  book model list view  -->
     <record id="view_library_book_list" model="ir.ui.view">

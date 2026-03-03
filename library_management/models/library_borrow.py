@@ -86,8 +86,11 @@ class ReturnWizard(models.TransientModel):
     # wizard action
     def action_return(self):
         active_model = self.env.context.get('active_model')
+        print("self.env.context=================", self.env.context)
         active_id = self.env.context.get('active_id')
         record = self.env[active_model].browse(active_id)
+        print('\n\n active_id:--------------', active_id)
+        print('record:---------------', record)
 
         if record.book_id:
             record.book_id.available_qty += 1

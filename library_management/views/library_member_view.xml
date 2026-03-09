@@ -5,6 +5,13 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+
+                    <button name="action_send_registration_email"
+                            string="Send Welcome Email"
+                            type="object"
+                            class="btn-primary"/>
+                </header>
                 <sheet>
                     <!-- smart borrow btn -->
                     <div name="button_box" class="oe_button_box">

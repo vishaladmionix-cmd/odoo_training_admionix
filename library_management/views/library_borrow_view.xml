@@ -19,6 +19,26 @@
                             string="Issue"
                             class="btn-primary"
                             invisible="state != 'draft'"/>
+
+                    <!-- Add these buttons inside your <header> tag in borrow form view -->
+
+<!--                    <button name="action_borrow"-->
+<!--                            string="Borrow Book"-->
+<!--                            type="object"-->
+<!--                            class="btn-primary"-->
+<!--                            invisible="state != 'draft'"/>-->
+
+<!--                    <button name="action_return"-->
+<!--                            string="Return Book"-->
+<!--                            type="object"-->
+<!--                            class="btn-success"-->
+<!--                            invisible="state != 'borrowed'"/>-->
+
+                    <button name="action_send_due_reminder"
+                            string="Send Due Reminder"
+                            type="object"
+                            class="btn-warning"
+                            invisible="state != 'borrowed'"/>
                 </header>
                 <sheet>
                     <div class='oe_title'>
@@ -36,8 +56,12 @@
                         <field name="borrow_date" readonly="state=='returned'"/>
                         <field name="return_date"/>
                         <field name="actual_return_date" readonly="state=='returned'"/>
-                        <field name="fine_amount" readonly="state=='returned'"/>
+<!--                        <field name="fine_amount" readonly="state=='returned'"/>-->
+                        <field name="fine_amount" invisible="state == 'draft'"/>
                         <field name="color" readonly="state=='returned'"/>
+                        <field name="remarks"/>
+                        <field name="is_renewed"/>
+                        <field name="renewed_return_date" invisible="not is_renewed"/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -53,7 +77,7 @@
             <list>
                 <field name="name"/>
                 <field name="borrow_date"/>
-                <field name="return_date"/>
+                <field name="return_date" required="state == 'issued'"/>
                 <field name="actual_return_date"/>
                 <field name="fine_amount"/>
                 <field name="color"/>
@@ -130,3 +154,4 @@
               action="action_library_borrow"
               sequence="3"/>
 </odoo>
+

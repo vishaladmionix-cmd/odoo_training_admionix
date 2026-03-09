@@ -30,3 +30,8 @@ class LibraryMember(models.Model):
             'domain': [('member_id', '=', self.id)],
             'context': {'default_member_id': self.id},
         }
+
+    def action_send_registration_email(self):
+        for rec in self:
+            template = self.env.ref('library_management.email_template_member_registration')
+            template.send_mail(rec.id, force_send=True)

@@ -74,6 +74,13 @@ class BorrowModel(models.Model):
                     rec.book_id.available_qty -= 1
                 else:
                     raise ValidationError('Book is out of stock !!!!')
+            template = self.env.ref('library_management.email_template_book_borrowed')
+            template.send_mail(rec.id, force_send=True)
+
+    def action_send_due_reminder(self):
+        for rec in self:
+            template = self.env.ref('library_management.email_template_due_date_reminder')
+            template.send_mail(rec.id, force_send=True)
 
 
 class ReturnWizard(models.TransientModel):
@@ -85,6 +92,7 @@ class ReturnWizard(models.TransientModel):
 
     # wizard action
     def action_return(self):
+
         active_model = self.env.context.get('active_model')
         print("self.env.context=================", self.env.context)
         active_id = self.env.context.get('active_id')
@@ -100,6 +108,9 @@ class ReturnWizard(models.TransientModel):
             'fine_amount': self.fine_amount,
             'state': 'returned',
             # 'available_qty': self.book_ids.available_qty - 1,
-
         })
+        template = self.env.ref('library_management.email_template_book_returned')
+        template.send_mail(record.id, force_send=True)
+
         return {'type': 'ir.actions.act_window_close'}
+

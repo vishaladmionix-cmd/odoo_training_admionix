@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Book Borrowed / Issued Email Template -->
+    <record id="email_template_book_borrowed" model="mail.template">
+        <field name="name">Library - Book Issued</field>
+        <field name="model_id" ref="library_management.model_library_borrow"/>
+        <field name="subject">Book Issued: {{ object.book_id.name }}</field>
+        <field name="email_from">{{ object.env.company.email }}</field>
+        <field name="email_to">{{ object.member_id.email }}</field>
+        <field name="body_html"><![CDATA[
+            <p>Dear <strong>{{ object.member_id.name }}</strong>,</p>
+            <p>You have successfully borrowed the following book:</p>
+            <p>Book: <strong>{{ object.book_id.name }}</strong></p>
+            <p>Author: {{ object.book_id.author }}</p>
+            <p>Borrow Date: {{ object.borrow_date }}</p>
+            <p>Due Date: {{ object.return_date }}</p>
+            <p>Please return the book on time to avoid penalties.</p>
+            <p>Regards,<br/>{{ object.env.company.name }}</p>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 2. Book Returned Email Template -->
+    <record id="email_template_book_returned" model="mail.template">
+        <field name="name">Library - Book Returned</field>
+        <field name="model_id" ref="library_management.model_library_borrow"/>
+        <field name="subject">Book Returned: {{ object.book_id.name }}</field>
+        <field name="email_from">{{ object.env.company.email }}</field>
+        <field name="email_to">{{ object.member_id.email }}</field>
+        <field name="body_html"><![CDATA[
+            <p>Dear <strong>{{ object.member_id.name }}</strong>,</p>
+            <p>We have successfully received the following book:</p>
+            <p>Book: <strong>{{ object.book_id.name }}</strong></p>
+            <p>Author: {{ object.book_id.author }}</p>
+            <p>Returned On: {{ object.actual_return_date }}</p>
+            {% if object.fine_amount > 0 %}
+            <p>Fine Amount: <strong style="color:red;">{{ object.fine_amount }}</strong></p>
+            {% endif %}
+            <p>Thank you for returning the book!</p>
+            <p>Regards,<br/>{{ object.env.company.name }}</p>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 3. Due Date Reminder Email Template -->
+    <record id="email_template_due_date_reminder" model="mail.template">
+        <field name="name">Library - Due Date Reminder</field>
+        <field name="model_id" ref="library_management.model_library_borrow"/>
+        <field name="subject">Reminder: {{ object.book_id.name }} is due soon!</field>
+        <field name="email_from">{{ object.env.company.email }}</field>
+        <field name="email_to">{{ object.member_id.email }}</field>
+        <field name="body_html"><![CDATA[
+            <p>Dear <strong>{{ object.member_id.name }}</strong>,</p>
+            <p>This is a reminder that the following book is due for return:</p>
+            <p>Book: <strong>{{ object.book_id.name }}</strong></p>
+            <p>Author: {{ object.book_id.author }}</p>
+            <p>Due Date: <strong style="color:red;">{{ object.return_date }}</strong></p>
+            <p>Please return the book on time to avoid penalties.</p>
+            <p>Regards,<br/>{{ object.env.company.name }}</p>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- 4. Member Registration Email Template -->
+    <record id="email_template_member_registration" model="mail.template">
+        <field name="name">Library - Member Registration</field>
+        <field name="model_id" ref="library_management.model_library_member"/>
+        <field name="subject">Welcome to the Library, {{ object.name }}!</field>
+        <field name="email_from">{{ object.env.company.email }}</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="body_html"><![CDATA[
+            <p>Dear <strong>{{ object.name }}</strong>,</p>
+            <p>You have been successfully registered as a library member.</p>
+            <p>Name: {{ object.name }}</p>
+            <p>Email: {{ object.email }}</p>
+            <p>Phone: {{ object.phone }}</p>
+            <p>You can now borrow books from our library. Happy reading!</p>
+            <p>Regards,<br/>{{ object.env.company.name }}</p>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

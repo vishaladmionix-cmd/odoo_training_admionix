@@ -24,10 +24,12 @@ Long description of module's purpose
 
     # always loaded
     'data': [
+        'data/mail_template.xml',
         'security/ir.model.access.csv',
         'views/library_model_view.xml',
         'views/library_member_view.xml',
         'views/library_borrow_view.xml',
+        'views/mail_template.xml'
     ],
     'installable': True,
     'auto_install': False,

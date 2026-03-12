@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_form_inherit_jewellery" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.jewellery</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Create Sale button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_open_jewellery_wizard"
+                        string="Create Sale"
+                        type="action"
+                        context="{'default_sale_order_id': id}"
+                        class="btn-primary"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

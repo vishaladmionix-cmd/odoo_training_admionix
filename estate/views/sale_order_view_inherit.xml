@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_form_inherit_estate" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.estate</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add field after Customer -->
+            <field name="partner_id" position="after">
+                <field name="note" string="Property Notes"/>
+            </field>
+
+            <!-- Add new Tab -->
+            <notebook position="inside">
+                <page string="Real Estate Info">
+                    <group>
+                        <field name="note" string="Property Description"/>
+                    </group>
+                </page>
+            </notebook>
+
+        </field>
+    </record>
+</odoo>

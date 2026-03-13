@@ -7,6 +7,7 @@
     'depends': ['base','mail','sale'],
     'data': [
         'security/ir.model.access.csv',
+        'data/cron.xml',
         'views/views.xml',
         'views/estate_property_view_inherit.xml',
         'views/sale_order_view_inherit.xml',

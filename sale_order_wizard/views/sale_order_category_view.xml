@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_sale_order_form_inherit_category" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.category</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <group>
+                    <field name="order_value_category" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Server Action — gear icon -->
+    <record id="action_set_order_value_category" model="ir.actions.server">
+        <field name="name">Calculate Order Value Category</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+       <field name="code">
+for record in records:
+    if record.amount_total &lt; 10000:
+        category = 'low'
+    elif 10000 &lt;= record.amount_total &lt;= 50000:
+        category = 'medium'
+    else:
+        category = 'high'
+
+    record.write({'order_value_category': category})
+
+    labels = {'low': 'Low', 'medium': 'Medium', 'high': 'High'}
+    record.message_post(
+        body="Order Value Category set to: %s (Total: $%s)" % (labels[category], record.amount_total),
+        subtype_xmlid='mail.mt_note',
+    )
+</field>
+    </record>
+</odoo>

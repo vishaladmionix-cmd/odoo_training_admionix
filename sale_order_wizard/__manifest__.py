@@ -16,7 +16,8 @@
         'security/ir.model.access.csv',
         'views/sale_order_wizard_views.xml',
         'views/sale_wizard.xml',
-        'views/account_move_views.xml'
+        'views/account_move_views.xml',
+        'views/sale_order_category_view.xml'
     ],
     'license': 'LGPL-3',
     'installable': True,

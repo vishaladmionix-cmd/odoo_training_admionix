@@ -92,8 +92,7 @@
     </record>
 
     <!--  menu for book model root  -->
-    <menuitem id="menu_library_book_root" name="Library Management"/>
-
+    <menuitem id="menu_library_book_root" name="Library Management" web_icon="library_management,static/description/icon.png"/>
     <!--  menu for book model -->
     <menuitem id="menu_library_book"
               name="Books"

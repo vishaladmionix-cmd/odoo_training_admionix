@@ -22,17 +22,17 @@
 
                     <!-- Add these buttons inside your <header> tag in borrow form view -->
 
-<!--                    <button name="action_borrow"-->
-<!--                            string="Borrow Book"-->
-<!--                            type="object"-->
-<!--                            class="btn-primary"-->
-<!--                            invisible="state != 'draft'"/>-->
+                    <!--                    <button name="action_borrow"-->
+                    <!--                            string="Borrow Book"-->
+                    <!--                            type="object"-->
+                    <!--                            class="btn-primary"-->
+                    <!--                            invisible="state != 'draft'"/>-->
 
-<!--                    <button name="action_return"-->
-<!--                            string="Return Book"-->
-<!--                            type="object"-->
-<!--                            class="btn-success"-->
-<!--                            invisible="state != 'borrowed'"/>-->
+                    <!--                    <button name="action_return"-->
+                    <!--                            string="Return Book"-->
+                    <!--                            type="object"-->
+                    <!--                            class="btn-success"-->
+                    <!--                            invisible="state != 'borrowed'"/>-->
 
                     <button name="action_send_due_reminder"
                             string="Send Due Reminder"
@@ -44,9 +44,9 @@
                     <div class='oe_title'>
 
                         <div class="oe_title">
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
                         </div>
                     </div>
                     <group>
@@ -56,7 +56,7 @@
                         <field name="borrow_date" readonly="state=='returned'"/>
                         <field name="return_date"/>
                         <field name="actual_return_date" readonly="state=='returned'"/>
-<!--                        <field name="fine_amount" readonly="state=='returned'"/>-->
+                        <!--                        <field name="fine_amount" readonly="state=='returned'"/>-->
                         <field name="fine_amount" invisible="state == 'draft'"/>
                         <field name="color" readonly="state=='returned'"/>
                         <field name="remarks"/>
@@ -143,8 +143,29 @@
     <record id="action_library_borrow" model="ir.actions.act_window">
         <field name="name">Borrow</field>
         <field name="res_model">library.borrow</field>
-        <field name="search_view_id" ref="view_library_borrow_search" />
+        <field name="search_view_id" ref="view_library_borrow_search"/>
         <field name="view_mode">list,form,search</field>
+    </record>
+
+
+    <record id="action_mark_late_books" model="ir.actions.server">
+        <field name="name">Mark as Late</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="binding_model_id" ref="model_library_borrow"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.late_email</field>
+
+<!--        <field name="code">-->
+<!--            if records:-->
+<!--                today = fields.Date.today()-->
+<!--                for record in records:-->
+<!--                    if record.return_date and record.return_date &lt; today and record.state != 'returned':-->
+<!--                        record.write({-->
+<!--                            'state': 'late',-->
+<!--                            'remarks': 'Book is overdue'-->
+<!--            })-->
+<!--        </field>-->
     </record>
 
     <!--  menu for borrow model -->

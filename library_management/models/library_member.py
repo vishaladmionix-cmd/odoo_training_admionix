@@ -11,7 +11,7 @@ class LibraryMember(models.Model):
     partner_id = fields.Many2one('res.partner', string="Partner ID")
     borrow_count = fields.Integer(string="Borrow Count", compute='_compute_borrow_count', store=True)
     member_ids = fields.One2many('library.borrow', 'member_id', string="Borrow")
-
+    user_id = fields.Many2one('res.users', string="User")
 
     # count of borrow
 

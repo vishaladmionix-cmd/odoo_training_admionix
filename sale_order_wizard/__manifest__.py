@@ -1,26 +1,23 @@
-# -*- coding: utf-8 -*-
 {
     'name': 'Sale Order Wizard',
-    'version': '1.0',
-    'summary': 'Brief description of the module',
-    'description': '''
-        Detailed description of the module
-    ''',
-    'category': 'Uncategorized',
-    'author': '',
-    'company': '',
-    'maintainer': '',
-    'website': '',
-    'depends': ['base','sale','hr','account'],
+    'version': '19.0.1.0.0',
+    'summary': 'Send confirmation email on Sale Order confirmation',
+    'category': 'Sales',
+    'author': 'My Company',
+    'license': 'LGPL-3',
+    'depends': ['base', 'sale', 'hr', 'account', 'mail'],
     'data': [
         'security/ir.model.access.csv',
+        'data/mail_template.xml',
         'views/sale_order_wizard_views.xml',
         'views/sale_wizard.xml',
         'views/account_move_views.xml',
-        'views/sale_order_category_view.xml'
+        'views/sale_order_category_view.xml',
     ],
-    'license': 'LGPL-3',
     'installable': True,
-    'application': False,
-    'auto_install': False,
+    'application': True,
+    'license': 'LGPL-3',
 }
+
+
+

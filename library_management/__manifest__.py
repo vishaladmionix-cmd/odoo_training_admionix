@@ -1,39 +1,27 @@
 {
-    'name': "library_management",
-
-    'summary': "Short (1 phrase/line) summary of the module's purpose",
-
-    'description': """
-Long description of module's purpose
-    """,
-
-    'author': "My Company",
-    'website': "https://www.yourcompany.com",
-
-    # Categories can be used to filter modules in modules listing
-    # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
-    # for the full list
-    'category': 'Uncategorized',
-    'version': '0.1',
-
-    # any module necessary for this one to work correctly
-    'depends': ['base','mail'],
-
-
-
-
-    # always loaded
+    'name': 'Library Management',
+    'version': '19.0.1.0.0',
+    'summary': 'Manage books, members and borrowing',
+    'author': 'My Company',
+    'category': 'Library Management',
+    'license': 'LGPL-3',
+    'depends': ['base', 'mail'],
+    'application': True,
+    'installable': True,
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'security/record_rules.xml'
         'data/mail_template.xml',
         'views/library_model_view.xml',
         'views/library_member_view.xml',
         'views/library_borrow_view.xml',
         'views/server_actions.xml',
     ],
+    'demo': [
+        'data/demo_data.xml',
+    ],
     'installable': True,
-    'auto_install': False,
     'application': True,
 
 }

@@ -11,3 +11,4 @@ class SaleOrder(models.Model):
         ],
         string='Order Value Category',
     )
+

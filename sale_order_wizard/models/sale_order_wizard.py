@@ -26,3 +26,15 @@ class SaleOrderCustom(models.Model):
         res['custom_reference'] = self.custom_reference
         res['custom_note'] = self.custom_note
         return res
+
+
+# ── Send email on confirmation ─────────────────────────────
+    def action_confirm(self):
+        res = super().action_confirm()
+        template = self.env.ref(
+            'sale_order_wizard.email_template_sale_order_confirm',
+            raise_if_not_found=False,
+        )
+        for order in self:
+            template.send_mail(order.id,force_send=True)
+        return res

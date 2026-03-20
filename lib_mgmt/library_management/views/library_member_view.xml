@@ -57,9 +57,11 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <search>
-                <group>
-                    <filter name="name" string="Member" context="{'group_by':'name'}"/>
-                </group>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <separator/>
+                <filter name="group_by_name" string="Group by Name" context="{'group_by':'name'}"/>
             </search>
         </field>
     </record>

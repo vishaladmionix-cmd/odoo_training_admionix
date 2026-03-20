@@ -4,16 +4,15 @@ from odoo import api, models, fields
 class LibraryMember(models.Model):
     _name = 'library.member'
     _description = "Library Member"
+    _rec_name = 'name'
 
-    name = fields.Char(string="Name")
+    name = fields.Char(string="Name", required=True)
     email = fields.Char(string="Email")
     phone = fields.Char(string="Phone")
-    partner_id = fields.Many2one('res.partner', string="Partner ID")
-    borrow_count = fields.Integer(string="Borrow Count", compute='_compute_borrow_count', store=True)
-    member_ids = fields.One2many('library.borrow', 'member_id', string="Borrow")
+    partner_id = fields.Many2one('res.partner', string="Partner")
     user_id = fields.Many2one('res.users', string="User")
-
-    # count of borrow
+    borrow_count = fields.Integer(string="Borrow Count", compute='_compute_borrow_count', store=True)
+    member_ids = fields.One2many('library.borrow', 'member_id', string="Borrow Records")
 
     @api.depends('member_ids')
     def _compute_borrow_count(self):
@@ -33,5 +32,9 @@ class LibraryMember(models.Model):
 
     def action_send_registration_email(self):
         for rec in self:
-            template = self.env.ref('library_management.email_template_member_registration')
-            template.send_mail(rec.id, force_send=True)
+            template = self.env.ref(
+                'library_management.email_template_member_registration',
+                raise_if_not_found=False,
+            )
+            if template:
+                template.send_mail(rec.id, force_send=True)

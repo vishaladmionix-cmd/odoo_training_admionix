@@ -11,7 +11,7 @@
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
-        'security/record_rules.xml'
+        'security/record_rules.xml',
         'data/mail_template.xml',
         'views/library_model_view.xml',
         'views/library_member_view.xml',
@@ -21,7 +21,4 @@
     'demo': [
         'data/demo_data.xml',
     ],
-    'installable': True,
-    'application': True,
-
 }

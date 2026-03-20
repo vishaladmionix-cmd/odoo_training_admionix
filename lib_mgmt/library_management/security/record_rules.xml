@@ -1,26 +1,25 @@
-<!--Member Rule-->
 <odoo>
+    <!-- Member: can only see their own member record (matched via user_id) -->
     <record id="library_member_rule_own" model="ir.rule">
-        <field name="name">Member Own Records</field>
+        <field name="name">Member: Own Records Only</field>
         <field name="model_id" ref="model_library_member"/>
         <field name="groups" eval="[(4, ref('library_management.group_library_member'))]"/>
-        <field name="domain_force">[('id', '=', user.id)]</field>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
     </record>
 
-    <!--Borrow Rule-->
+    <!-- Borrow: member can only see borrows linked to their member record -->
     <record id="library_borrow_rule_member" model="ir.rule">
-        <field name="name">Borrow: Own Records</field>
+        <field name="name">Borrow: Own Records Only</field>
         <field name="model_id" ref="model_library_borrow"/>
         <field name="groups" eval="[(4, ref('library_management.group_library_member'))]"/>
         <field name="domain_force">[('member_id.user_id', '=', user.id)]</field>
     </record>
 
-    <!--Book Rule-->
-
+    <!-- Book: members can read all books -->
     <record id="library_book_rule_member" model="ir.rule">
         <field name="name">Books: Read All</field>
         <field name="model_id" ref="model_library_book"/>
         <field name="groups" eval="[(4, ref('library_management.group_library_member'))]"/>
-        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 </odoo>

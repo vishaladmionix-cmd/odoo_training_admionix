@@ -5,7 +5,6 @@
         <field name="model">library.borrow</field>
         <field name="arch" type="xml">
             <form>
-                <!--  wizard return btn to open   -->
                 <header>
                     <field name="state" widget="statusbar"/>
                     <button name="action_open_wizard"
@@ -13,52 +12,29 @@
                             string="Return"
                             class="btn-primary"
                             invisible="state != 'issued'"/>
-
                     <button name="issue_button"
                             type="object"
                             string="Issue"
                             class="btn-primary"
                             invisible="state != 'draft'"/>
-
-                    <!-- Add these buttons inside your <header> tag in borrow form view -->
-
-                    <!--                    <button name="action_borrow"-->
-                    <!--                            string="Borrow Book"-->
-                    <!--                            type="object"-->
-                    <!--                            class="btn-primary"-->
-                    <!--                            invisible="state != 'draft'"/>-->
-
-                    <!--                    <button name="action_return"-->
-                    <!--                            string="Return Book"-->
-                    <!--                            type="object"-->
-                    <!--                            class="btn-success"-->
-                    <!--                            invisible="state != 'borrowed'"/>-->
-
                     <button name="action_send_due_reminder"
                             string="Send Due Reminder"
                             type="object"
                             class="btn-warning"
-                            invisible="state != 'borrowed'"/>
+                            invisible="state not in ('issued', 'late')"/>
                 </header>
                 <sheet>
-                    <div class='oe_title'>
-
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name"/>
-                            </h1>
-                        </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
                     </div>
                     <group>
                         <field name="book_id"/>
                         <field name="member_id"/>
-
-                        <field name="borrow_date" readonly="state=='returned'"/>
+                        <field name="borrow_date" readonly="state == 'returned'"/>
                         <field name="return_date"/>
-                        <field name="actual_return_date" readonly="state=='returned'"/>
-                        <!--                        <field name="fine_amount" readonly="state=='returned'"/>-->
+                        <field name="actual_return_date" readonly="state == 'returned'"/>
                         <field name="fine_amount" invisible="state == 'draft'"/>
-                        <field name="color" readonly="state=='returned'"/>
+                        <field name="color" readonly="state == 'returned'"/>
                         <field name="remarks"/>
                         <field name="is_renewed"/>
                         <field name="renewed_return_date" invisible="not is_renewed"/>
@@ -76,17 +52,19 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="member_id"/>
+                <field name="book_id"/>
                 <field name="borrow_date"/>
-                <field name="return_date" required="state == 'issued'"/>
+                <field name="return_date"/>
                 <field name="actual_return_date"/>
                 <field name="fine_amount"/>
-                <field name="color"/>
+                <field name="state"/>
             </list>
         </field>
     </record>
 
-    <!-- borrow wizard form   -->
-    <record id='view_library_return_wizard_form' model="ir.ui.view">
+    <!-- borrow wizard form -->
+    <record id="view_library_return_wizard_form" model="ir.ui.view">
         <field name="name">Return Book</field>
         <field name="model">library.return.wizard</field>
         <field name="arch" type="xml">
@@ -102,36 +80,36 @@
                             type="object"
                             string="Confirm Return"
                             class="btn-primary"/>
-                    <button
-                            special="cancel"
+                    <button special="cancel"
                             string="Cancel"
                             class="btn-secondary"/>
                 </footer>
             </form>
         </field>
     </record>
-    <!-- search -->
+
+    <!-- search view -->
     <record id="view_library_borrow_search" model="ir.ui.view">
         <field name="name">library.borrow.search</field>
         <field name="model">library.borrow</field>
         <field name="arch" type="xml">
             <search>
-                <group>
-                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                    <filter name="issued" string="Issued" domain="[('state','=','issued')]"/>
-                    <filter name="returned" string="Returned" domain="[('state','=','returned')]"/>
-                    <filter name="late" string="Late" domain="[('state','=','late')]"/>
-
-                    <filter name="state" string="State" context="{'group_by':'state'}"/>
-                </group>
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="book_id"/>
+                <filter name="draft"    string="Draft"    domain="[('state','=','draft')]"/>
+                <filter name="issued"   string="Issued"   domain="[('state','=','issued')]"/>
+                <filter name="returned" string="Returned" domain="[('state','=','returned')]"/>
+                <filter name="late"     string="Late"     domain="[('state','=','late')]"/>
+                <separator/>
+                <filter name="group_state" string="Group by State" context="{'group_by':'state'}"/>
             </search>
         </field>
     </record>
 
-
-    <!--borrow sequence-->
+    <!-- borrow sequence -->
     <record id="sequence_library_borrow" model="ir.sequence">
-        <field name="name">Borrow Reference Name</field>
+        <field name="name">Borrow Reference</field>
         <field name="code">library.borrow</field>
         <field name="prefix">BRW/%(year)s/</field>
         <field name="padding">4</field>
@@ -139,7 +117,7 @@
         <field name="number_increment">1</field>
     </record>
 
-    <!--  borrow model form action  -->
+    <!-- borrow action -->
     <record id="action_library_borrow" model="ir.actions.act_window">
         <field name="name">Borrow</field>
         <field name="res_model">library.borrow</field>
@@ -147,32 +125,10 @@
         <field name="view_mode">list,form,search</field>
     </record>
 
-
-    <record id="action_mark_late_books" model="ir.actions.server">
-        <field name="name">Mark as Late</field>
-        <field name="model_id" ref="model_library_borrow"/>
-        <field name="binding_model_id" ref="model_library_borrow"/>
-        <field name="binding_view_types">list,form</field>
-        <field name="state">code</field>
-        <field name="code">records.late_email</field>
-
-<!--        <field name="code">-->
-<!--            if records:-->
-<!--                today = fields.Date.today()-->
-<!--                for record in records:-->
-<!--                    if record.return_date and record.return_date &lt; today and record.state != 'returned':-->
-<!--                        record.write({-->
-<!--                            'state': 'late',-->
-<!--                            'remarks': 'Book is overdue'-->
-<!--            })-->
-<!--        </field>-->
-    </record>
-
-    <!--  menu for borrow model -->
+    <!-- menu -->
     <menuitem id="menu_library_borrow"
               name="Borrow"
               parent="menu_library_book_root"
               action="action_library_borrow"
               sequence="3"/>
 </odoo>
-

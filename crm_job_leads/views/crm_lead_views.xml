@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="view_crm_lead_form_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.job</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="after">
+                <group>
+                    <field name="candidate_name" string="Candidate's Name" />
+                    <field name="job_profile" string="Job Profile"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_crm_lead_list_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.list.inherit.job</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_name']" position="after">
+                <field name="candidate_name"/>
+                <field name="job_profile"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_crm_lead_search_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.search.inherit.job</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//search" position="inside">
+
+                <!-- Search Fields -->
+                <field name="candidate_name"/>
+                <field name="job_profile"/>
+
+                <separator/>
+
+                <!-- Filters -->
+                <filter string="Odoo Developer" name="filter_odoo_dev"
+                        domain="[('job_profile','=','odoo_developer')]"/>
+                <filter string="Software Engineer" name="filter_sw_eng"
+                        domain="[('job_profile','=','software_engineer')]"/>
+                <filter string="Business Analyst" name="filter_ba"
+                        domain="[('job_profile','=','business_analyst')]"/>
+
+                <separator/>
+
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+                    <filter string="Job Profile" name="group_by_job"
+                            context="{'group_by':'job_profile'}"/>
+                </group>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

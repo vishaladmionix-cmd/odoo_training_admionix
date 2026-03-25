@@ -3,7 +3,7 @@
     'version': '19.0.1.0.0',
     'summary': 'Manage books, members and borrowing',
     'author': 'My Company',
-    'category': 'Library Management',
+    'category': 'Hidden',
     'license': 'LGPL-3',
     'depends': ['base', 'mail'],
     'application': True,

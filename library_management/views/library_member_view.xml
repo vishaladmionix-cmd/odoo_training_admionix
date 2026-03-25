@@ -30,6 +30,8 @@
                         <field name="name"/>
                         <field name="email"/>
                         <field name="phone"/>
+                        <field name="user_id"/>
+                        <field name="partner_id"/>
 
                     </group>
                 </sheet>
@@ -74,9 +76,10 @@
     </record>
 
     <!--  menu for member model  -->
-    <menuitem id="menu_library_member"
-              name="Members"
-              parent="menu_library_book_root"
-              action="action_library_member"
-              sequence="2"/>
+<menuitem id="menu_library_member"
+          name="Members"
+          parent="menu_library_book_root"
+          action="action_library_member"
+          sequence="2"
+          groups="library_management.group_library_librarian"/>
 </odoo>

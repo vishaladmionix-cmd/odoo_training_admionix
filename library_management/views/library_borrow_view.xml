@@ -7,25 +7,37 @@
             <form>
                 <header>
                     <field name="state" widget="statusbar"/>
+                    <!-- Return button — Librarian only -->
                     <button name="action_open_wizard"
                             type="object"
                             string="Return"
                             class="btn-primary"
-                            invisible="state != 'issued'"/>
+                            invisible="state != 'issued'"
+                            groups="library_management.group_library_librarian"/>
+
+
+                    <!-- Issue button — Librarian only -->
                     <button name="issue_button"
                             type="object"
                             string="Issue"
                             class="btn-primary"
-                            invisible="state != 'draft'"/>
+                            invisible="state != 'draft'"
+                            groups="library_management.group_library_librarian"/>
+
+
+                    <!-- Send Due Reminder — Librarian only -->
                     <button name="action_send_due_reminder"
                             string="Send Due Reminder"
                             type="object"
                             class="btn-warning"
-                            invisible="state not in ('issued', 'late')"/>
+                            invisible="state not in ('issued', 'late')"
+                            groups="library_management.group_library_librarian"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name"/></h1>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
                     </div>
                     <group>
                         <field name="book_id"/>
@@ -97,10 +109,10 @@
                 <field name="name"/>
                 <field name="member_id"/>
                 <field name="book_id"/>
-                <filter name="draft"    string="Draft"    domain="[('state','=','draft')]"/>
-                <filter name="issued"   string="Issued"   domain="[('state','=','issued')]"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="issued" string="Issued" domain="[('state','=','issued')]"/>
                 <filter name="returned" string="Returned" domain="[('state','=','returned')]"/>
-                <filter name="late"     string="Late"     domain="[('state','=','late')]"/>
+                <filter name="late" string="Late" domain="[('state','=','late')]"/>
                 <separator/>
                 <filter name="group_state" string="Group by State" context="{'group_by':'state'}"/>
             </search>
@@ -125,10 +137,11 @@
         <field name="view_mode">list,form,search</field>
     </record>
 
-    <!-- menu -->
+
     <menuitem id="menu_library_borrow"
               name="Borrow"
               parent="menu_library_book_root"
               action="action_library_borrow"
-              sequence="3"/>
+              sequence="3"
+              groups="library_management.group_library_librarian"/>
 </odoo>

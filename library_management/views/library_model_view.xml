@@ -91,13 +91,15 @@
         <field name="view_mode">list,form,search</field>
     </record>
 
-    <!--  menu for book model root  -->
-    <menuitem id="menu_library_book_root" name="Library Management" web_icon="library_management,static/description/icon.png"/>
-    <!--  menu for book model -->
-    <menuitem id="menu_library_book"
-              name="Books"
-              parent="menu_library_book_root"
-              action="action_library_book"
-              sequence="1"/>
+
+<menuitem id="menu_library_book_root" name="Library Management"
+          web_icon="library_management,static/description/icon.png"
+          groups="library_management.group_library_librarian,library_management.group_library_member"/>
+<menuitem id="menu_library_book"
+          name="Books"
+          parent="menu_library_book_root"
+          action="action_library_book"
+          sequence="1"
+          groups="library_management.group_library_librarian,library_management.group_library_member"/>
 
 </odoo>

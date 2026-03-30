@@ -3,3 +3,9 @@ access_estate_property,access_estate_property,model_estate_property,base.group_u
 access_estate_property_type,access_estate_property_type,model_estate_property_type,base.group_user,1,1,1,1
 access_estate_property_tag,access_estate_property_tag,model_estate_property_tag,base.group_user,1,1,1,1
 access_estate_property_offer,access_estate_property_offer,model_estate_property_offer,base.group_user,1,1,1,1
+access_crm_lead_sales_exec,crm.lead exec,crm.model_crm_lead,estate.group_sales_executive,1,1,1,0
+access_crm_lead_sales_mgr,crm.lead manager,crm.model_crm_lead,estate.group_sales_manager,1,1,1,1
+access_sale_order_exec,sale.order exec,sale.model_sale_order,estate.group_estate_sales_executive,1,1,1,0
+access_sale_order_manager,sale.order manager,sale.model_sale_order,estate.group_sales_manager,1,1,1,1
+access_purchase_officer,purchase officer,purchase.model_purchase_order,estate.group_purchase_officer,1,1,1,0
+access_purchase_manager,purchase manager,purchase.model_purchase_order,estate.group_purchase_manager,1,1,1,1

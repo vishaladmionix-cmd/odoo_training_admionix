@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Sales Executive: can only see their own leads -->
+        <record id="crm_lead_rule_sales_executive" model="ir.rule">
+            <field name="name">CRM Lead: Sales Executive sees own leads only</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('estate.group_sales_executive'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Sales Manager: can see all leads -->
+        <record id="crm_lead_rule_sales_manager" model="ir.rule">
+            <field name="name">CRM Lead: Sales Manager sees all leads</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('estate.group_sales_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Sales Manager only: can confirm Sale Order (handled via view groups) -->
+        <!-- Purchase Officer / Manager: access handled via menu groups -->
+
+    </data>
+</odoo>

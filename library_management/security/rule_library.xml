@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Record Rules -->
+
+<!--    library book-->
+    <record id="rule_library_book_user" model="ir.rule">
+        <field name="name">rule.library: Users access only their own records</field>
+        <field name="model_id" ref="model_library_book"/>
+        <field name="groups" eval="[(4, ref('group_library_group_user'))]"/>
+    </record>
+
+    <record id="rule_library_book_manager" model="ir.rule">
+        <field name="name">rule.library: Manager access all records</field>
+        <field name="model_id" ref="model_library_book"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_library_group_manager'))]"/>
+    </record>
+
+<!--    library member-->
+    <record id="rule_library_member_user" model="ir.rule">
+        <field name="name">rule.library: Users access only their own records</field>
+        <field name="model_id" ref="model_library_member"/>
+        <field name="domain_force">[('partner_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_library_group_user'))]"/>
+    </record>
+
+    <record id="rule_libarary_member_manager" model="ir.rule">
+        <field name="name">rule.library: Managers access all records</field>
+        <field name="model_id" ref="model_library_member"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_library_group_manager'))]"/>
+    </record>
+
+<!--    library borrow-->
+    <record id="rule_library_borrow_user" model="ir.rule">
+        <field name="name">rule.library: Users access only their own records</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="domain_force">[('member_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_library_group_user'))]"/>
+    </record>
+
+    <record id="rule_libarary_borrow_manager" model="ir.rule">
+        <field name="name">rule.library: Managers access all records</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_library_group_manager'))]"/>
+    </record>
+</odoo>

@@ -17,7 +17,7 @@ class EstateProperty(models.Model):
         string='Validity (days)',
         compute='_compute_validity',
         inverse='_inverse_validity',
-        default=90,
+        store=True,
     )
     date_deadline = fields.Date(
         string='Deadline',
@@ -86,18 +86,22 @@ class EstateProperty(models.Model):
         for record in self:
             record.total_area = record.living_area + record.garden_area
 
-    @api.depends('date_availability', 'validity')
+    @api.depends('date_availability', 'date_deadline')
     def _compute_validity(self):
         for record in self:
-            if record.date_availability:
-                record.date_deadline = record.date_availability + timedelta(days=record.validity)
+            if record.date_availability and record.date_deadline:
+                delta = record.date_deadline - record.date_availability
+                record.validity = delta.days
+            elif record.date_deadline:
+                delta = record.date_deadline - fields.Date.today()
+                record.validity = delta.days
             else:
-                record.date_deadline = fields.Date.today() + timedelta(days=record.validity)
+                record.validity = 90
 
     def _inverse_validity(self):
         for record in self:
             if record.date_deadline:
-                record.date_availability = record.date_deadline - timedelta(days=record.validity)
+                record.date_availability = record.date_deadline - timedelta(days=record.validity or 90)
 
     # ───── ONCHANGE ─────
 

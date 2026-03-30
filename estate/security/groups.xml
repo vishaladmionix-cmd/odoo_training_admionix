@@ -1,0 +1,77 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ==================== SALES GROUPS ==================== -->
+        <record id="group_sales_executive" model="res.groups">
+            <field name="name">Sales Executive</field>
+        </record>
+
+        <record id="group_sales_manager" model="res.groups">
+            <field name="name">Sales Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_sales_executive'))]"/>
+        </record>
+
+        <!-- ==================== PURCHASE GROUPS ==================== -->
+        <record id="group_purchase_officer" model="res.groups">
+            <field name="name">Purchase Officer</field>
+        </record>
+
+        <record id="group_purchase_manager" model="res.groups">
+            <field name="name">Purchase Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_purchase_officer'))]"/>
+        </record>
+
+        <!-- ==================== ESTATE SALES GROUP ==================== -->
+        <record id="group_estate_sales_executive" model="res.groups">
+            <field name="name">Estate Sales Executive</field>
+        </record>
+
+    </data>
+</odoo>
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<!--    <data>-->
+
+<!--        &lt;!&ndash; ==================== SALES GROUPS ==================== &ndash;&gt;-->
+<!--        <record id="group_sales_executive" model="res.groups">-->
+<!--            <field name="name">Sales Executive</field>-->
+<!--            &lt;!&ndash; Give CRM access &ndash;&gt;-->
+<!--            <field name="implied_ids" eval="[(4, ref('crm.group_crm_user'))]"/>-->
+<!--        </record>-->
+
+<!--        <record id="group_sales_manager" model="res.groups">-->
+<!--            <field name="name">Sales Manager</field>-->
+<!--            <field name="implied_ids" eval="[-->
+<!--                (4, ref('group_sales_executive')),-->
+<!--                (4, ref('crm.group_crm_manager'))-->
+<!--            ]"/>-->
+<!--        </record>-->
+
+<!--        &lt;!&ndash; ==================== PURCHASE GROUPS ==================== &ndash;&gt;-->
+<!--        <record id="group_purchase_officer" model="res.groups">-->
+<!--            <field name="name">Purchase Officer</field>-->
+<!--            &lt;!&ndash; Give Purchase access &ndash;&gt;-->
+<!--            <field name="implied_ids" eval="[(4, ref('purchase.group_purchase_user'))]"/>-->
+<!--        </record>-->
+
+<!--        <record id="group_purchase_manager" model="res.groups">-->
+<!--            <field name="name">Purchase Manager</field>-->
+<!--            <field name="implied_ids" eval="[-->
+<!--                (4, ref('group_purchase_officer')),-->
+<!--                (4, ref('purchase.group_purchase_manager'))-->
+<!--            ]"/>-->
+<!--        </record>-->
+
+<!--        &lt;!&ndash; ==================== ESTATE SALES GROUP ==================== &ndash;&gt;-->
+<!--        <record id="group_estate_sales_executive" model="res.groups">-->
+<!--            <field name="name">Estate Sales Executive</field>-->
+<!--            &lt;!&ndash; Give Sales access &ndash;&gt;-->
+<!--            <field name="implied_ids" eval="[(4, ref('sale.group_sale_salesman'))]"/>-->
+<!--        </record>-->
+
+<!--    </data>-->
+<!--</odoo>-->

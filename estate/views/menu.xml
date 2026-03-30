@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ==================== SALES MENU ==================== -->
+        <menuitem id="menu_sales_root" name="Sales" sequence="10"
+            groups="estate.group_sales_executive,estate.group_sales_manager"/>
+
+        <!-- Leads - only for Sales Executive -->
+        <menuitem id="menu_sales_leads" name="Leads" parent="menu_sales_root"
+            action="crm.crm_lead_all_leads" sequence="1"
+            groups="estate.group_sales_executive"/>
+
+        <!-- Quotations - only for Sales Manager -->
+        <menuitem id="menu_sales_quotations" name="Quotations" parent="menu_sales_root"
+            action="sale.action_quotations_with_onboarding" sequence="2"
+            groups="estate.group_sales_manager"/>
+
+        <!-- Sales Orders - for both -->
+        <menuitem id="menu_sales_orders" name="Sales Orders" parent="menu_sales_root"
+            action="sale.action_orders" sequence="3"
+            groups="estate.group_sales_executive,estate.group_sales_manager"/>
+
+
+        <!-- ==================== PURCHASE MENU ==================== -->
+        <menuitem id="menu_purchase_root" name="Purchase" sequence="20"
+            groups="estate.group_purchase_officer,estate.group_purchase_manager"/>
+
+        <!-- Purchase Orders - for both officers and managers -->
+        <menuitem id="menu_purchase_orders" name="Purchase Orders" parent="menu_purchase_root"
+            action="purchase.purchase_rfq" sequence="1"
+            groups="estate.group_purchase_officer,estate.group_purchase_manager"/>
+
+    </data>
+</odoo>

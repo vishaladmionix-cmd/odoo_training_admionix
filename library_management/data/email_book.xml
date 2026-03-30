@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="email_late_book" model="mail.template">
+            <field name="name">Library Borrow: Send by Email</field>
+            <field name="model_id" ref="model_library_borrow"/>
+            <field name="email_from">{{ user.email_formatted }}</field>
+            <field name="email_to">{{object.member_id.email}}</field>
+            <field name="subject">Late Book Reminder - {{ object.name }}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="use_default_to" eval="False"/>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Dear <t t-out="object.member_id.name"/>,
+                    </p>
+                    <p>Book_id :<t t-out="object.name"/>,
+                    </p>
+                    <p>Book:<t t-out="object.book_id.name"/>,
+                    </p>
+                    <p>Borrow Date:<t t-out="object.borrow_date"/>,
+                    </p>
+                    <p>Return Date:<t t-out="object.return_date"/>,
+                    </p>
+
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

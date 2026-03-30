@@ -5,20 +5,6 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <form>
-                <header>
-                     <button name="test_search_count_unavailable"
-                             type="object"
-                             string="Test Search Count"
-                             class="btn-primary"/>
-
-                     <button name="test_mapped"
-                             type="object"
-                             string="Test Mapped"
-                             class="btn-primary"/>
-
-
-
-                </header>
                 <sheet>
                     <group>
                         <field name="name" readonly="available_qty == 0"/>
@@ -39,33 +25,12 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                <field name="author"/>
-                <field name="isbn"/>
-
-                <!-- Filter for Available Books -->
-                <filter name="available_books"
-                        string="Available"
-                        domain="[('state','=','available')]"/>
-
-                <!-- Filter for Unavailable Books -->
-                <filter name="unavailable_books"
-                        string="Unavailable"
-                        domain="[('state','=','unavailable')]"/>
+                <group>
+                    <filter name="name" string="Book" context="{'group_by':'name'}"/>
+                </group>
             </search>
         </field>
     </record>
-    <!--    <record id="view_library_model_search" model="ir.ui.view">-->
-    <!--        <field name="name">library.book.search</field>-->
-    <!--        <field name="model">library.book</field>-->
-    <!--        <field name="arch" type="xml">-->
-    <!--            <search>-->
-    <!--                <group>-->
-    <!--                    <filter name="name" string="Book" context="{'group_by':'name'}"/>-->
-    <!--                </group>-->
-    <!--            </search>-->
-    <!--        </field>-->
-    <!--    </record>-->
 
     <!--  book model list view  -->
     <record id="view_library_book_list" model="ir.ui.view">
@@ -73,6 +38,12 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <list>
+                <header>
+                    <button string="Search Price"
+                            type="object"
+                            class="btn-primary"
+                            name="search_borrow"/>
+                </header>
                 <field name="name"/>
                 <field name="author"/>
                 <field name="isbn"/>
@@ -91,15 +62,13 @@
         <field name="view_mode">list,form,search</field>
     </record>
 
+    <!--  menu for book model root  -->
+    <menuitem id="menu_library_book_root" name="Library Management"/>
 
-<menuitem id="menu_library_book_root" name="Library Management"
-          web_icon="library_management,static/description/icon.png"
-          groups="library_management.group_library_librarian,library_management.group_library_member"/>
-<menuitem id="menu_library_book"
-          name="Books"
-          parent="menu_library_book_root"
-          action="action_library_book"
-          sequence="1"
-          groups="library_management.group_library_librarian,library_management.group_library_member"/>
+    <!--  menu for book model -->
+    <menuitem id="menu_library_book"
+              name="Books"
+              action="action_library_book"
+              sequence="1"/>
 
 </odoo>

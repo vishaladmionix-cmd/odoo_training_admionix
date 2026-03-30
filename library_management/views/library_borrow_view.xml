@@ -5,51 +5,41 @@
         <field name="model">library.borrow</field>
         <field name="arch" type="xml">
             <form>
+                <!--  wizard return btn to open   -->
                 <header>
                     <field name="state" widget="statusbar"/>
-                    <!-- Return button — Librarian only -->
                     <button name="action_open_wizard"
                             type="object"
                             string="Return"
                             class="btn-primary"
-                            invisible="state != 'issued'"
-                            groups="library_management.group_library_librarian"/>
+                            invisible="state != 'issued'"/>
 
-
-                    <!-- Issue button — Librarian only -->
                     <button name="issue_button"
                             type="object"
                             string="Issue"
                             class="btn-primary"
-                            invisible="state != 'draft'"
-                            groups="library_management.group_library_librarian"/>
-
-
-                    <!-- Send Due Reminder — Librarian only -->
-                    <button name="action_send_due_reminder"
-                            string="Send Due Reminder"
-                            type="object"
-                            class="btn-warning"
-                            invisible="state not in ('issued', 'late')"
-                            groups="library_management.group_library_librarian"/>
+                            invisible="state != 'draft'"/>
+                    <button name="%(action_report_library_borrow)d"
+                            type="action"
+                            string="Print Receipt"
+                            class="oe_highlight"/>
                 </header>
                 <sheet>
-                    <div class="oe_title">
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                    <div class='oe_title'>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
                     </div>
                     <group>
                         <field name="book_id"/>
                         <field name="member_id"/>
-                        <field name="borrow_date" readonly="state == 'returned'"/>
-                        <field name="return_date"/>
-                        <field name="actual_return_date" readonly="state == 'returned'"/>
-                        <field name="fine_amount" invisible="state == 'draft'"/>
-                        <field name="color" readonly="state == 'returned'"/>
-                        <field name="remarks"/>
-                        <field name="is_renewed"/>
-                        <field name="renewed_return_date" invisible="not is_renewed"/>
+                        <field name="borrow_date" readonly="state=='returned'"/>
+                        <field name="return_date" readonly="state=='returned'"/>
+                        <field name="actual_return_date" readonly="state=='returned'"/>
+                        <field name="fine_amount" readonly="state=='returned'"/>
+                        <field name="color" readonly="state=='returned'"/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -63,20 +53,23 @@
         <field name="model">library.borrow</field>
         <field name="arch" type="xml">
             <list>
+                <header>
+                    <button name="delete_record" string="Delete Returned Book" type="object" class="btn-danger"
+                            confirm="Are you sure you want to delete selected records?"/>
+                </header>
                 <field name="name"/>
-                <field name="member_id"/>
-                <field name="book_id"/>
+                <field name="state"/>
                 <field name="borrow_date"/>
                 <field name="return_date"/>
                 <field name="actual_return_date"/>
                 <field name="fine_amount"/>
-                <field name="state"/>
+                <field name="color"/>
             </list>
         </field>
     </record>
 
-    <!-- borrow wizard form -->
-    <record id="view_library_return_wizard_form" model="ir.ui.view">
+    <!-- borrow wizard form   -->
+    <record id='view_library_return_wizard_form' model="ir.ui.view">
         <field name="name">Return Book</field>
         <field name="model">library.return.wizard</field>
         <field name="arch" type="xml">
@@ -92,36 +85,35 @@
                             type="object"
                             string="Confirm Return"
                             class="btn-primary"/>
-                    <button special="cancel"
+                    <button
+                            special="cancel"
                             string="Cancel"
                             class="btn-secondary"/>
                 </footer>
             </form>
         </field>
     </record>
-
-    <!-- search view -->
+    <!-- search -->
     <record id="view_library_borrow_search" model="ir.ui.view">
         <field name="name">library.borrow.search</field>
         <field name="model">library.borrow</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                <field name="member_id"/>
-                <field name="book_id"/>
-                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                <filter name="issued" string="Issued" domain="[('state','=','issued')]"/>
-                <filter name="returned" string="Returned" domain="[('state','=','returned')]"/>
-                <filter name="late" string="Late" domain="[('state','=','late')]"/>
-                <separator/>
-                <filter name="group_state" string="Group by State" context="{'group_by':'state'}"/>
+                <group>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                    <filter name="issued" string="Issued" domain="[('state','=','issued')]"/>
+                    <filter name="returned" string="Returned" domain="[('state','=','returned')]"/>
+                    <filter name="late" string="Late" domain="[('state','=','late')]"/>
+                    <filter name="state" string="State" context="{'group_by':'state'}"/>
+                </group>
             </search>
         </field>
     </record>
 
-    <!-- borrow sequence -->
+
+    <!--borrow sequence-->
     <record id="sequence_library_borrow" model="ir.sequence">
-        <field name="name">Borrow Reference</field>
+        <field name="name">Borrow Reference Name</field>
         <field name="code">library.borrow</field>
         <field name="prefix">BRW/%(year)s/</field>
         <field name="padding">4</field>
@@ -129,7 +121,7 @@
         <field name="number_increment">1</field>
     </record>
 
-    <!-- borrow action -->
+    <!--  borrow model form action  -->
     <record id="action_library_borrow" model="ir.actions.act_window">
         <field name="name">Borrow</field>
         <field name="res_model">library.borrow</field>
@@ -138,10 +130,31 @@
     </record>
 
 
+    <record id="server_late_book_schedular" model="ir.actions.server">
+        <field name="name">Late Book Scheduler</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="binding_model_id" ref="model_library_borrow"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = records.check_late_manually()
+        </field>
+    </record>
+
+
+    <record id="email_late_book_server" model="ir.actions.server">
+        <field name="name">Late Book Email</field>
+        <field name="model_id" ref="model_library_borrow"/>
+        <field name="binding_model_id" ref="model_library_borrow"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.late_email()</field>
+    </record>
+
+    <!--  menu for borrow model -->
     <menuitem id="menu_library_borrow"
               name="Borrow"
               parent="menu_library_book_root"
               action="action_library_borrow"
-              sequence="3"
-              groups="library_management.group_library_librarian"/>
+              sequence="3"/>
 </odoo>

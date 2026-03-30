@@ -86,11 +86,6 @@
                         </group>
                     </group>
 
-                    <group string="Other Info">
-                        <field name="salesperson_id"/>
-                        <field name="buyer_id"/>
-                    </group>
-
                     <group string="Property Extra Details">
                         <field name="property_category"/>
                         <field name="floor_number"/>
@@ -172,21 +167,21 @@
 
     <!-- ═══ MENUS ═══ -->
     <menuitem
-        id="estate_menu_root"
-        name="Real Estate"
-        sequence="10"/>
+            id="estate_menu_root"
+            name="Real Estate"
+            sequence="10"/>
 
     <menuitem
-        id="estate_menu_properties"
-        name="Properties"
-        parent="estate_menu_root"
-        sequence="10"/>
+            id="estate_menu_properties"
+            name="Properties"
+            parent="estate_menu_root"
+            sequence="10"/>
 
     <menuitem
-        id="estate_menu_all_properties"
-        name="All Properties"
-        parent="estate_menu_properties"
-        action="estate_property_action"
-        sequence="10"/>
+            id="estate_menu_all_properties"
+            name="All Properties"
+            parent="estate_menu_properties"
+            action="estate_property_action"
+            sequence="10"/>
 
 </odoo>

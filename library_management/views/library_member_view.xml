@@ -5,17 +5,10 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <form>
-                <header>
-
-                    <button name="action_send_registration_email"
-                            string="Send Welcome Email"
-                            type="object"
-                            class="btn-primary"/>
-                </header>
                 <sheet>
                     <!-- smart borrow btn -->
                     <div name="button_box" class="oe_button_box">
-                        <button name="action_view_borrows"
+                        <button name="compute_borrow_count"
                                 string="Borrow"
                                 type="object"
                                 icon="fa-book">
@@ -30,8 +23,6 @@
                         <field name="name"/>
                         <field name="email"/>
                         <field name="phone"/>
-                        <field name="user_id"/>
-                        <field name="partner_id"/>
 
                     </group>
                 </sheet>
@@ -48,7 +39,6 @@
                 <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
-                <field name="borrow_count"/>
             </list>
         </field>
     </record>
@@ -59,14 +49,13 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                <field name="email"/>
-                <field name="phone"/>
-                <separator/>
-                <filter name="group_by_name" string="Group by Name" context="{'group_by':'name'}"/>
+                <group>
+                    <filter name="name" string="Member" context="{'group_by':'name'}"/>
+                </group>
             </search>
         </field>
     </record>
+
     <!--  member model action  -->
     <record id="action_library_member" model="ir.actions.act_window">
         <field name="name">Member</field>
@@ -76,10 +65,10 @@
     </record>
 
     <!--  menu for member model  -->
-<menuitem id="menu_library_member"
-          name="Members"
-          parent="menu_library_book_root"
-          action="action_library_member"
-          sequence="2"
-          groups="library_management.group_library_librarian"/>
+    <menuitem id="menu_library_member"
+              name="Members"
+              parent="menu_library_book_root"
+              action="action_library_member"
+              sequence="2"
+              groups="group_library_group_manager"/>
 </odoo>

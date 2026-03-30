@@ -1,13 +1,16 @@
+import logging
 from datetime import timedelta
+
 from odoo import api, models, fields
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class BorrowModel(models.Model):
     _name = 'library.borrow'
-    _description = 'Library Borrow'
+    _description = 'Library borrow'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_name = 'name'
 
     name = fields.Char(string='Sequence', copy=False, default='New', readonly=True, required=True)
     member_id = fields.Many2one('library.member', string='Member')
@@ -15,82 +18,79 @@ class BorrowModel(models.Model):
     borrow_date = fields.Datetime(string='Borrow Date', default=fields.Datetime.now)
     return_date = fields.Datetime(string='Return Date')
     actual_return_date = fields.Datetime(string='Actual Return Date')
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('issued', 'Issued'),
-        ('returned', 'Returned'),
-        ('late', 'Late'),
-    ], string='Status', default='draft', tracking=True)
+    state = fields.Selection([('draft', 'Draft'), ('issued', 'Issued'), ('returned', 'Returned'), ('late', 'Late')],
+                             string='Status', default="draft")
     color = fields.Integer()
     fine_amount = fields.Float(compute='compute_fine_amount', string='Fine Amount', store=True)
 
+    # schedule ir.corn jobs
+    def check_late_books(self):
+        today = fields.Datetime.now()
+
+        _logger.info("====== CRON STARTED ======")
+        _logger.info(f"Today: {today}")
+
+        late_borrows = self.search([
+            ('state', '=', 'issued'),
+            ('return_date', '<', today),
+        ])
+
+        _logger.info(f"Found {len(late_borrows)} late records")
+
+        for record in late_borrows:
+            if record.state:
+                record.state = 'late'
+                record.late_email()
+            _logger.info(f"Marked late: {record.state}")
+
+        _logger.info("====== CRON FINISHED ======")
+
+    @api.model
+    def check_late_manually(self):
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        for rec in self:
+            print(rec.state)
+            if rec.state and rec.state == 'returned':
+                rec.state = 'late'
+
+    # delete record
+    def delete_record(self):
+        for record in self:
+            if record.state == 'returned':
+                record.unlink()
+            else:
+                raise ValidationError("You can only delete Returned records!")
+
+    # compute field for fine amount
     @api.depends('actual_return_date', 'return_date')
     def compute_fine_amount(self):
         for rec in self:
             rec.fine_amount = 0.0
-            if rec.return_date and rec.actual_return_date:
-                if rec.return_date < rec.actual_return_date:
-                    late_days = (rec.actual_return_date - rec.return_date).days
-                    rec.fine_amount = late_days * 10
+            if rec.return_date and rec.actual_return_date:  # we have to check first if the data is there
+                if rec.return_date < rec.actual_return_date:  # then compare it
+                    rem_date = (
+                            rec.actual_return_date - rec.return_date).days  # add .days as without it will not calculate
+                    rec.fine_amount = rem_date * 10  # whenever different arises it will calculate eg 2*10 20 fine
 
+    # sequence for name
     @api.model_create_multi
-    def create(self, vals):
+    def create(self, vals):  # vals is dictionary
         for rec in vals:
-            rec['name'] = self.env['ir.sequence'].next_by_code('library.borrow') or 'New'
-        return super().create(vals)
+            code = self.env['ir.sequence'].next_by_code('library.borrow')  # first is environment then follow by model
+            rec['name'] = code  # overwrite the name field with code
+        res = super().create(vals)  # each time it create the record in db
+        return res
 
-    @api.onchange('book_id', 'borrow_date')
+    # onchange requirements
+    @api.onchange("book_id", 'borrow_date')
     def change_data(self):
         for rec in self:
-            if rec.book_id and rec.book_id.available_qty < 1:
-                raise ValidationError('Out of Stock!')
-            if rec.borrow_date:
+            if rec.book_id and rec.book_id.available_qty <= 0:
+                raise ValidationError("This book is out of stock!!!")
+            if rec.book_id:
                 rec.return_date = rec.borrow_date + timedelta(days=7)
 
-    def issue_button(self):
-        for rec in self:
-            if not rec.book_id:
-                raise ValidationError('Please select a book!')
-            if not rec.member_id:
-                raise ValidationError('Please select a member!')
-            if rec.book_id.available_qty <= 0:
-                raise ValidationError('Book is out of stock!')
-            rec.book_id.available_qty -= 1
-            rec.state = 'issued'
-            rec._send_email_with_log(
-                template_xml_id='library_management.email_template_book_borrowed',
-                log_subject='Book Issued – Email Sent',
-                log_note=(
-                    f'Book issue confirmation sent to <b>{rec.member_id.name}</b> '
-                    f'for book <b>{rec.book_id.name}</b>. Due date: {rec.return_date}.'
-                ),
-            )
-
-    def action_send_mail(self):
-        for rec in self:
-            if rec.state != 'issued':
-                continue
-            rec._send_email_with_log(
-                template_xml_id='library_management.email_template_book_borrowed',
-                log_subject='Book Issued – Email Sent (Server Action)',
-                log_note=(
-                    f'Book issue email triggered via server action for '
-                    f'<b>{rec.member_id.name}</b> – <b>{rec.book_id.name}</b>. '
-                    f'Due: {rec.return_date}.'
-                ),
-            )
-
-    def action_send_due_reminder(self):
-        for rec in self:
-            rec._send_email_with_log(
-                template_xml_id='library_management.email_template_due_date_reminder',
-                log_subject='Due Date Reminder Sent',
-                log_note=(
-                    f'Due date reminder sent to <b>{rec.member_id.name}</b> '
-                    f'for <b>{rec.book_id.name}</b>. Due: {rec.return_date}.'
-                ),
-            )
-
+    # action wizard to open
     def action_open_wizard(self):
         return {
             'name': 'Return Book',
@@ -101,37 +101,34 @@ class BorrowModel(models.Model):
             'context': {
                 'active_id': self.id,
                 'active_model': self._name,
-            },
+            }
         }
 
-    def _send_email_with_log(self, template_xml_id, log_subject, log_note):
+    # issue button
+    @api.depends('book_id')
+    def issue_button(self):
         for rec in self:
-            template = self.env.ref(template_xml_id, raise_if_not_found=False)
-            if not template:
+            rec.state = 'issued'
+            if rec.state and rec.state == 'issued':
                 rec.message_post(
-                    body=f'<p style="color:red">Email template <b>{template_xml_id}</b> not found.</p>',
-                    subject='Email Template Missing',
-                    message_type='comment',
-                    subtype_xmlid='mail.mt_note',
+                    body=(f"Book has been issued by {rec.member_id.name}!!!"),
                 )
-                continue
-            try:
-                template.send_mail(rec.id, force_send=True)
-                rec.message_post(
-                    body=f'<p><span style="color:green">✓ Email Sent</span><br/>{log_note}</p>',
-                    subject=log_subject,
-                    message_type='comment',
-                    subtype_xmlid='mail.mt_note',
-                    author_id=self.env.user.partner_id.id,
-                )
-            except Exception as e:
-                rec.message_post(
-                    body=f'<p style="color:red">✗ Email failed: {e}</p>',
-                    subject=f'Email Failed: {log_subject}',
-                    message_type='comment',
-                    subtype_xmlid='mail.mt_note',
-                    author_id=self.env.user.partner_id.id,
-                )
+            if rec.book_id.available_qty:
+                if rec.book_id.available_qty <= 0:
+
+                    raise ValidationError('Book is out of stock !!!!')
+
+                else:
+                    rec.book_id.available_qty -= 1
+
+    # email template
+    def late_email(self):
+        template = self.env.ref('library_book_management.email_late_book')
+        for record in self:
+            # email_values = {
+            #     'email_to': record.member_id.email,
+            # }
+            template.send_mail(record.id, force_send=True)
 
 
 class ReturnWizard(models.TransientModel):
@@ -141,27 +138,23 @@ class ReturnWizard(models.TransientModel):
     actual_return_date = fields.Datetime(string='Actual Return Date')
     fine_amount = fields.Float(string='Fine Amount', readonly=True)
 
+    # wizard action
     def action_return(self):
-        active_id = self.env.context.get('active_id')
         active_model = self.env.context.get('active_model')
+        active_id = self.env.context.get('active_id')
         record = self.env[active_model].browse(active_id)
-
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>', record)
         if record.book_id:
             record.book_id.available_qty += 1
-
         record.write({
+
             'actual_return_date': self.actual_return_date,
+            'fine_amount': self.fine_amount,
             'state': 'returned',
         })
 
-        fine_note = (
-            f'Fine applied: <b>{record.fine_amount}</b>'
-            if record.fine_amount else 'No fine applied.'
+        record.message_post(
+            body=(f"The Book has been returned by {record.member_id.name}!!!"),
+            message_type='comment'
         )
-        record._send_email_with_log(
-            template_xml_id='library_management.email_template_book_returned',
-            log_subject='Book Returned – Email Sent',
-            log_note=f'Return confirmation sent to <b>{record.member_id.name}</b>. {fine_note}',
-        )
-
         return {'type': 'ir.actions.act_window_close'}
